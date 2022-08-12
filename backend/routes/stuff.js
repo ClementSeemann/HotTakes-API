@@ -5,10 +5,16 @@ const multer = require('../middleware/multer-config');
 
 const stuffCtrl = require('../controllers/stuff')
 
+// CRUD for sauces
+
 router.post('/', auth, multer, stuffCtrl.createThing);
 router.put('/:id', auth, multer, stuffCtrl.modifyThing);
 router.delete('/:id', auth, stuffCtrl.deleteThing);
 router.get('/:id', auth, stuffCtrl.getOneThing);
 router.get('/', auth, stuffCtrl.getAllThings);
+
+//Add and remove reviews
+//router.post('/:id/like', auth, likesCtrl.addLikeOrDislike);
+
 
 module.exports = router;
