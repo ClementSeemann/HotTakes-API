@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 
 const app = express();
-const Sauces = require("./models/sauce");
+const Sauce = require("./models/sauce");
 const stuffRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 const path = require('path');
