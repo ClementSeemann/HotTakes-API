@@ -14,7 +14,7 @@ router.get('/:id', auth, stuffCtrl.getOneThing);
 router.get('/', auth, stuffCtrl.getAllThings);
 
 //Add and remove reviews
-//router.post('/:id/like', auth, likesCtrl.addLikeOrDislike);
+router.post('/:id/like', auth, stuffCtrl.likeThing);
 
 
 module.exports = router;
