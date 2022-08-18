@@ -8,6 +8,8 @@ const userRoutes = require('./routes/user');
 const path = require('path');
 const bodyParser = require("body-parser");
 
+require('dotenv').config();
+
 mongoose.connect("mongodb+srv://utilisateur1:txtP6gook@clusterp6.n4soyol.mongodb.net/?retryWrites=true&w=majority",
   { useNewUrlParser: true,
     useUnifiedTopology: true })

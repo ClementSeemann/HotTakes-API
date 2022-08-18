@@ -3,7 +3,7 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 const multer = require('../middleware/multer-config');
 
-const stuffCtrl = require('../controllers/sauce')
+const stuffCtrl = require('../controllers/sauce');
 
 // CRUD for sauces
 
