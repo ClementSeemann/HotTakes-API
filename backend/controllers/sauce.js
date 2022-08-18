@@ -107,8 +107,8 @@ exports.likeSauce = (req, res, next) => {
               $pull: { usersLiked: req.body.userId },
               _id: req.params.id
             })
-              .then(() => { res.status(201).json({ message: 'Merci pour ton vote !' }); })
-              .catch((error) => { res.status(400).json({ error: error }); });
+              .then(() => res.status(201).json({ message: 'Merci pour ton vote !' }))
+              .catch((error) => res.status(400).json({ error: error }))
 
           } if (sauce.usersDisliked.find(user => user === req.body.userId)) {
             Sauce.updateOne({ _id: req.params.id }, {
@@ -116,11 +116,11 @@ exports.likeSauce = (req, res, next) => {
               $pull: { usersDisliked: req.body.userId },
               _id: req.params.id
             })
-              .then(() => { res.status(201).json({ message: 'OK' }); })
-              .catch((error) => { res.status(400).json({ error: error }); });
+              .then(() => res.status(201).json({ message: 'OK' }))
+              .catch((error) => res.status(400).json({ error: error }));
           }
         })
-        .catch((error) => { res.status(404).json({ error: error }); });
+        .catch((error) => res.status(404).json({ error: error }));
       break;
     //Likes = 1, Mise à jour de la sauce
     case 1:
@@ -129,8 +129,8 @@ exports.likeSauce = (req, res, next) => {
         $push: { usersLiked: req.body.userId },
         _id: req.params.id
       })
-        .then(() => { res.status(201).json({ message: 'Like ajouté !' }); })
-        .catch((error) => { res.status(400).json({ error: error }); });
+        .then(() => res.status(201).json({ message: 'Like ajouté !' }))
+        .catch((error) => res.status(400).json({ error: error }));
       break;
     //likes = -1, mise à jour de la sauce
     case -1:
@@ -139,8 +139,8 @@ exports.likeSauce = (req, res, next) => {
         $push: { usersDisliked: req.body.userId },
         _id: req.params.id
       })
-        .then(() => { res.status(201).json({ message: 'Ton avis a bien été pris en compte' }) })
-        .catch((error) => { res.status(400).json({ error: error }) });
+        .then(() => res.status(201).json({ message: 'Ton avis a bien été pris en compte' }))
+        .catch((error) => res.status(400).json({ error: error }));
       break;
     default:
       console.error('Bad request')
