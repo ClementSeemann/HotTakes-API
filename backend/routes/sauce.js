@@ -13,7 +13,7 @@ router.delete('/:id', auth, stuffCtrl.deleteSauce);
 router.get('/:id', auth, stuffCtrl.getOneSauce);
 router.get('/', auth, stuffCtrl.getAllSauce);
 
-//Add and remove reviews
+//Add and remove likes
 router.post('/:id/like', auth, stuffCtrl.likeSauce);
 
 
