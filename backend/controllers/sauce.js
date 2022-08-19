@@ -97,53 +97,64 @@ exports.getAllSauce = (req, res, next) => {
 
 // Route POST pour liker les sauces
 exports.likeSauce = (req, res, next) => {
-  switch (req.body.like) {
-    case 0:
-      Sauce.findOne({ _id: req.params.id })
-        .then((sauce) => {
-          if (sauce.usersLiked.find(user => user === req.body.userId)) {
-            Sauce.updateOne({ _id: req.params.id }, {
-              $inc: { likes: -1 },
-              $pull: { usersLiked: req.body.userId },
-              _id: req.params.id
-            })
-              .then(() => res.status(201).json({ message: 'Merci pour ton vote !' }))
-              .catch((error) => res.status(400).json({ error: error }))
+  const sauceId = req.params.id;
+  const userId = req.body.userId;
+  const like = req.body.like;
+  // CAS 1: l'utilisateur like la sauce pour la 1ere fois
+  if (like === 1) {
+    Sauce.updateOne(
+      { _id: sauceId },
+      {
+        $inc: { likes: like },
+        $push: { usersLiked: userId },
+      }
+    )
+      .then((sauce) => res.status(200).json({ message: "Merci pour ton vote !" }))
+      .catch((error) => res.status(500).json({ error }));
+  }
 
-          } if (sauce.usersDisliked.find(user => user === req.body.userId)) {
-            Sauce.updateOne({ _id: req.params.id }, {
-              $inc: { dislikes: -1 },
-              $pull: { usersDisliked: req.body.userId },
-              _id: req.params.id
+  // CAS 2: l'utilisateur dislike la sauce pour la 1ere fois
+  else if (like === -1) {
+    Sauce.updateOne(
+      { _id: sauceId },
+      {
+        $inc: { dislikes: -1 * like },
+        $push: { usersDisliked: userId },
+      }
+    )
+      .then((sauce) => res.status(200).json({ message: "Ton avis a bien été pris en compte" }))
+      .catch((error) => res.status(500).json({ error }));
+  }
+  // CAS 3: l'utilisateur change d'avis
+  // 3.1: Il retire son like
+  else {
+    Sauce.findOne({ _id: sauceId })
+      .then((sauce) => {
+        if (sauce.usersLiked.includes(userId)) {
+          Sauce.updateOne(
+            { _id: sauceId },
+            { $pull: { usersLiked: userId }, $inc: { likes: -1 } }
+          )
+            .then((sauce) => {
+              res.status(200).json({ message: "Ton avis a bien été pris en compte" });
             })
-              .then(() => res.status(201).json({ message: 'OK' }))
-              .catch((error) => res.status(400).json({ error: error }));
-          }
-        })
-        .catch((error) => res.status(404).json({ error: error }));
-      break;
-    //Likes = 1, Mise à jour de la sauce
-    case 1:
-      Sauce.updateOne({ _id: req.params.id }, {
-        $inc: { likes: 1 },
-        $push: { usersLiked: req.body.userId },
-        _id: req.params.id
+            .catch((error) => res.status(500).json({ error }));
+          // 3.2: Il retire son dislike
+        } else if (sauce.usersDisliked.includes(userId)) {
+          Sauce.updateOne(
+            { _id: sauceId },
+            {
+              $pull: { usersDisliked: userId },
+              $inc: { dislikes: -1 },
+            }
+          )
+            .then((sauce) => {
+              res.status(200).json({ message: "Ton avis a bien été pris en compte" });
+            })
+            .catch((error) => res.status(500).json({ error }));
+        }
       })
-        .then(() => res.status(201).json({ message: 'Like ajouté !' }))
-        .catch((error) => res.status(400).json({ error: error }));
-      break;
-    //likes = -1, mise à jour de la sauce
-    case -1:
-      Sauce.updateOne({ _id: req.params.id }, {
-        $inc: { dislikes: 1 },
-        $push: { usersDisliked: req.body.userId },
-        _id: req.params.id
-      })
-        .then(() => res.status(201).json({ message: 'Ton avis a bien été pris en compte' }))
-        .catch((error) => res.status(400).json({ error: error }));
-      break;
-    default:
-      console.error('Bad request')
+      .catch((error) => res.status(401).json({ error }));
   }
 };
 
